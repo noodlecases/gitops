@@ -41,7 +41,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  admin-password: cnpjRUJFRUoxNw==
+  admin-password: cXB3OWFKaDlhQQ==
 kind: Secret
 metadata:
   labels:
@@ -56,8 +56,8 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: WEV6blZEMFRlZw==
-  postgres-password: NmtMZnprSk5Rdg==
+  password: OHRGSFEyeEhKWQ==
+  postgres-password: SG1EWXdIM01qQg==
 kind: Secret
 metadata:
   labels:
@@ -192,7 +192,7 @@ spec:
     metadata:
       annotations:
         checksum/configmap-env-vars: bbf5e6909b74daab12458cb71d7d08fd6a889ce11447419395e81f3a8c590890
-        checksum/secrets: ef68daa93f50fee5fc6393cedc44f9d2712246462fcaeebebb15b0c3807fbb4d
+        checksum/secrets: fa84b45339234d0e1a4eef36b5ceca3ad5ff95e5ee7abcadb0dd8660d80b71d5
       labels:
         app.kubernetes.io/component: keycloak
         app.kubernetes.io/instance: noodlecases-keycloak
@@ -267,12 +267,27 @@ spec:
         securityContext:
           runAsNonRoot: true
           runAsUser: 1001
-        volumeMounts: null
-      initContainers: null
+        volumeMounts:
+        - mountPath: /opt/jboss/keycloak/themes/my-theme
+          name: theme
+      initContainers:
+      - args:
+        - -o
+        - /theme/theme.jar
+        - https://github.com/noodlecases/keycloak-theme/releases/download/v/standalone-keycloak-theme.jar
+        command:
+        - curl
+        image: curlimages/curl:7.87.0
+        name: theme-loader
+        volumeMounts:
+        - mountPath: /theme
+          name: theme
       securityContext:
         fsGroup: 1001
       serviceAccountName: noodlecases-keycloak
-      volumes: null
+      volumes:
+      - emptyDir: {}
+        name: theme
   updateStrategy:
     rollingUpdate: {}
     type: RollingUpdate

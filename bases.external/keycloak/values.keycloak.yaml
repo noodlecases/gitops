@@ -415,10 +415,14 @@ updateStrategy:
   rollingUpdate: {}
 ## @param extraVolumes Optionally specify extra list of additional volumes for Keycloak pods
 ##
-extraVolumes: []
+extraVolumes:
+  - name: theme
+    emptyDir: {}
 ## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for Keycloak container(s)
 ##
-extraVolumeMounts: []
+extraVolumeMounts:
+  - name: theme
+    mountPath: /opt/jboss/keycloak/themes/my-theme
 ## @param initContainers Add additional init containers to the Keycloak pods
 ## Example:
 ## initContainers:
@@ -429,7 +433,20 @@ extraVolumeMounts: []
 ##       - name: portname
 ##         containerPort: 1234
 ##
-initContainers: []
+initContainers:
+  - name: theme-loader
+    image: curlimages/curl:7.87.0
+    command:
+      - "curl"
+    args:
+      - "-o"
+      - "/theme/theme.jar"
+      - "https://github.com/noodlecases/keycloak-theme/releases/download/v/standalone-keycloak-theme.jar"
+    volumeMounts:
+      - name: theme
+        mountPath: /theme
+
+
 ## @param sidecars Add additional sidecar containers to the Keycloak pods
 ## Example:
 ## sidecars:

@@ -441,6 +441,7 @@ initContainers:
     args:
       - "-o"
       - "/theme/theme.jar"
+      - "-L0"
       - "https://github.com/noodlecases/keycloak-theme/releases/download/v/standalone-keycloak-theme.jar"
     volumeMounts:
       - name: theme

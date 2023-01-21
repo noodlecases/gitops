@@ -41,7 +41,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  admin-password: a3UzUU5yM3RlNw==
+  admin-password: eGR1amlJZDZjcg==
 kind: Secret
 metadata:
   labels:
@@ -56,8 +56,8 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: S1pZVzlrYXp1Sw==
-  postgres-password: aEdJOVJFOXlwTw==
+  password: S2ZPOVpsZUJ0eQ==
+  postgres-password: cklWdmlZM3luSQ==
 kind: Secret
 metadata:
   labels:
@@ -192,7 +192,7 @@ spec:
     metadata:
       annotations:
         checksum/configmap-env-vars: bbf5e6909b74daab12458cb71d7d08fd6a889ce11447419395e81f3a8c590890
-        checksum/secrets: a3ce21bd2f9da508498b480d186f0ba2aa98bda2eca32c838de8df917cba54e8
+        checksum/secrets: cb7e5da33fbb1cd4c7f3ba3221b4c32dae75296774e1aaac88a083618725bab2
       labels:
         app.kubernetes.io/component: keycloak
         app.kubernetes.io/instance: noodlecases-keycloak
@@ -274,6 +274,7 @@ spec:
       - args:
         - -o
         - /theme/theme.jar
+        - -L0
         - https://github.com/noodlecases/keycloak-theme/releases/download/v/standalone-keycloak-theme.jar
         command:
         - curl

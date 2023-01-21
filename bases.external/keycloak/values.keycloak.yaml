@@ -422,7 +422,7 @@ extraVolumes:
 ##
 extraVolumeMounts:
   - name: theme
-    mountPath: /opt/jboss/keycloak/themes/my-theme
+    mountPath: /opt/bitnami/keycloak/themes/my-theme
 ## @param initContainers Add additional init containers to the Keycloak pods
 ## Example:
 ## initContainers:

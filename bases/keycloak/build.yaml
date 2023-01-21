@@ -41,7 +41,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  admin-password: SVpZN0k5RWZ4SQ==
+  admin-password: V2lXakFIMkN3VQ==
 kind: Secret
 metadata:
   labels:
@@ -56,8 +56,8 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  password: WG5iN3pZVmQxUw==
-  postgres-password: M1EyMDdkZ0ZDYw==
+  password: STZZR2d3WGMzQw==
+  postgres-password: MHJTVWt1a2JPYQ==
 kind: Secret
 metadata:
   labels:
@@ -192,7 +192,7 @@ spec:
     metadata:
       annotations:
         checksum/configmap-env-vars: bbf5e6909b74daab12458cb71d7d08fd6a889ce11447419395e81f3a8c590890
-        checksum/secrets: 18325f627c2b847d5d83e19a4f6ed6d10dc03702b44fec583754624d79401709
+        checksum/secrets: a78e1d736897c2f24dc6713f934a6894fed9dbf704d9aa0ba9654d40b26a7153
       labels:
         app.kubernetes.io/component: keycloak
         app.kubernetes.io/instance: noodlecases-keycloak
@@ -268,7 +268,7 @@ spec:
           runAsNonRoot: true
           runAsUser: 1001
         volumeMounts:
-        - mountPath: /opt/bitnami/keycloak/themes
+        - mountPath: /opt/bitnami/keycloak/providers
           name: theme
       initContainers:
       - args:

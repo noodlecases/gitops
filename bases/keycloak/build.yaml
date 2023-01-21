@@ -1,0 +1,428 @@
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    helm.sh/chart: keycloak-13.0.2
+  name: noodlecases-keycloak
+  namespace: noodlecases-auth
+---
+apiVersion: v1
+data:
+  JAVA_OPTS_APPEND: -Djgroups.dns.query=noodlecases-keycloak-headless.noodlecases-auth.svc.cluster.local
+  KC_LOG_LEVEL: INFO
+  KEYCLOAK_ADMIN: user
+  KEYCLOAK_CACHE_STACK: kubernetes
+  KEYCLOAK_CACHE_TYPE: ispn
+  KEYCLOAK_DATABASE_HOST: noodlecases-keycloak-postgresql
+  KEYCLOAK_DATABASE_NAME: bitnami_keycloak
+  KEYCLOAK_DATABASE_PORT: "5432"
+  KEYCLOAK_DATABASE_USER: bn_keycloak
+  KEYCLOAK_ENABLE_HTTPS: "false"
+  KEYCLOAK_ENABLE_STATISTICS: "false"
+  KEYCLOAK_HTTP_PORT: "8080"
+  KEYCLOAK_LOG_OUTPUT: default
+  KEYCLOAK_PRODUCTION: "false"
+  KEYCLOAK_PROXY: passthrough
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    helm.sh/chart: keycloak-13.0.2
+  name: noodlecases-keycloak-env-vars
+  namespace: noodlecases-auth
+---
+apiVersion: v1
+data:
+  admin-password: cnpjRUJFRUoxNw==
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    helm.sh/chart: keycloak-13.0.2
+  name: noodlecases-keycloak
+  namespace: noodlecases-auth
+type: Opaque
+---
+apiVersion: v1
+data:
+  password: WEV6blZEMFRlZw==
+  postgres-password: NmtMZnprSk5Rdg==
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-12.1.9
+  name: noodlecases-keycloak-postgresql
+  namespace: noodlecases-auth
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    helm.sh/chart: keycloak-13.0.2
+  name: noodlecases-keycloak
+  namespace: noodlecases-auth
+spec:
+  ports:
+  - name: http
+    nodePort: null
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/name: keycloak
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    helm.sh/chart: keycloak-13.0.2
+  name: noodlecases-keycloak-headless
+  namespace: noodlecases-auth
+spec:
+  clusterIP: None
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/name: keycloak
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-12.1.9
+  name: noodlecases-keycloak-postgresql
+  namespace: noodlecases-auth
+spec:
+  ports:
+  - name: tcp-postgresql
+    nodePort: null
+    port: 5432
+    targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/name: postgresql
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-12.1.9
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  name: noodlecases-keycloak-postgresql-hl
+  namespace: noodlecases-auth
+spec:
+  clusterIP: None
+  ports:
+  - name: tcp-postgresql
+    port: 5432
+    targetPort: tcp-postgresql
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/name: postgresql
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    helm.sh/chart: keycloak-13.0.2
+  name: noodlecases-keycloak
+  namespace: noodlecases-auth
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: keycloak
+      app.kubernetes.io/instance: noodlecases-keycloak
+      app.kubernetes.io/name: keycloak
+  serviceName: noodlecases-keycloak-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configmap-env-vars: bbf5e6909b74daab12458cb71d7d08fd6a889ce11447419395e81f3a8c590890
+        checksum/secrets: ef68daa93f50fee5fc6393cedc44f9d2712246462fcaeebebb15b0c3807fbb4d
+      labels:
+        app.kubernetes.io/component: keycloak
+        app.kubernetes.io/instance: noodlecases-keycloak
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: keycloak
+        helm.sh/chart: keycloak-13.0.2
+    spec:
+      affinity:
+        nodeAffinity: null
+        podAffinity: null
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: noodlecases-keycloak
+                  app.kubernetes.io/name: keycloak
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: noodlecases-keycloak
+        - name: KEYCLOAK_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: noodlecases-keycloak-postgresql
+        - name: KEYCLOAK_HTTP_RELATIVE_PATH
+          value: /
+        envFrom:
+        - configMapRef:
+            name: noodlecases-keycloak-env-vars
+        image: docker.io/bitnami/keycloak:20.0.3-debian-11-r5
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 300
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: keycloak
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /realms/master
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+        volumeMounts: null
+      initContainers: null
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: noodlecases-keycloak
+      volumes: null
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: noodlecases-keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-12.1.9
+  name: noodlecases-keycloak-postgresql
+  namespace: noodlecases-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: noodlecases-keycloak
+      app.kubernetes.io/name: postgresql
+  serviceName: noodlecases-keycloak-postgresql-hl
+  template:
+    metadata:
+      annotations: null
+      labels:
+        app.kubernetes.io/component: primary
+        app.kubernetes.io/instance: noodlecases-keycloak
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: postgresql
+        helm.sh/chart: postgresql-12.1.9
+      name: noodlecases-keycloak-postgresql
+    spec:
+      affinity:
+        nodeAffinity: null
+        podAffinity: null
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: primary
+                  app.kubernetes.io/instance: noodlecases-keycloak
+                  app.kubernetes.io/name: postgresql
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: POSTGRESQL_PORT_NUMBER
+          value: "5432"
+        - name: POSTGRESQL_VOLUME_DIR
+          value: /bitnami/postgresql
+        - name: PGDATA
+          value: /bitnami/postgresql/data
+        - name: POSTGRES_USER
+          value: bn_keycloak
+        - name: POSTGRES_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgres-password
+              name: noodlecases-keycloak-postgresql
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: noodlecases-keycloak-postgresql
+        - name: POSTGRES_DB
+          value: bitnami_keycloak
+        - name: POSTGRESQL_ENABLE_LDAP
+          value: "no"
+        - name: POSTGRESQL_ENABLE_TLS
+          value: "no"
+        - name: POSTGRESQL_LOG_HOSTNAME
+          value: "false"
+        - name: POSTGRESQL_LOG_CONNECTIONS
+          value: "false"
+        - name: POSTGRESQL_LOG_DISCONNECTIONS
+          value: "false"
+        - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+          value: "off"
+        - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+          value: error
+        - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+          value: pgaudit
+        image: docker.io/bitnami/postgresql:15.1.0-debian-11-r20
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - exec pg_isready -U "bn_keycloak" -d "dbname=bitnami_keycloak" -h 127.0.0.1
+              -p 5432
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: postgresql
+        ports:
+        - containerPort: 5432
+          name: tcp-postgresql
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - -e
+            - |
+              exec pg_isready -U "bn_keycloak" -d "dbname=bitnami_keycloak" -h 127.0.0.1 -p 5432
+              [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          failureThreshold: 6
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits: {}
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          runAsUser: 1001
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /bitnami/postgresql
+          name: data
+      hostIPC: false
+      hostNetwork: false
+      initContainers: null
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: default
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: dshm
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi

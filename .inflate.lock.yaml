@@ -1,0 +1,9 @@
+_bases_dir: bases.external
+_inflated_dir: bases
+_version: v0.1.0
+bases:
+- build_datetime_utc: '2023-01-21T06:40:00.199830'
+  hash: 6de86c8bd115f5372505d73c4c25905e9b4672df0e95fc63e1106fdc0a6c59ce
+  hash_type: sha256
+  name: keycloak
+  path: keycloak

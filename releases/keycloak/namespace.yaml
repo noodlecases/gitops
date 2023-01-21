@@ -4,4 +4,4 @@ metadata:
   name: noodlecases-auth
   labels:
     name: noodlecases-auth
-    istio-injection: enabled
+    istio-injection: disabled

@@ -2,6 +2,11 @@ _bases_dir: bases.external
 _inflated_dir: bases
 _version: v0.1.0
 bases:
+- build_datetime_utc: '2023-01-22T10:20:37.451788'
+  hash: 4a665d3e281d7e8a520e3bdad8f61a866ec76d11755e7a2d3d4626342576e8c4
+  hash_type: sha256
+  name: codestrands
+  path: codestrands
 - build_datetime_utc: '2023-01-21T11:50:40.558520'
   hash: c4ff8d23c423de75f435bc5d1df0c6db611db327895aabb7f5fe96269b878793
   hash_type: sha256

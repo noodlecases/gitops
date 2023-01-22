@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+  - releaseName: codestrands-psql
+    namespace: codestrands
+    name: postgresql
+    repo: https://charts.bitnami.com/bitnami
+    version: 12.1.9
+    valuesFile: values.postgres.yaml
+    includeCRDs: true
+  - releaseName: codestrands-redis
+    namespace: codestrands
+    name: redis
+    repo: https://charts.bitnami.com/bitnami
+    version: 17.5.1
+    valuesFile: values.redis.yaml
+    includeCRDs: true
